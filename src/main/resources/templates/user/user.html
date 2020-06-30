@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/style/header.css}" />
+    <title th:text="#{title}"></title>
+</head>
+<body>
+<nav>
+    <ul>
+        <li class="logo" th:text="#{title}"></li>
+        <div th:if="${order eq null}">
+            <li><a href="/order"  th:text="#{createOrderLabel}"></a></li>
+        </div>
+        <li><a href="BikeRentalServlet?command=find_user_orders" th:text="#{ordersLabel}">></a></li>
+        <li><a href="BikeRentalServlet?command=rental_points_page" th:text="#{contacts}"></a></li>
+        <li style="float: right; margin-right: 50px"><a href="#" th:text="${session.user.name}"></a>
+            <ul>
+                <li><a href="#" onclick="showProfile()" th:text="#{profileLabel}"></a> </li>
+                <li><a href="#" onclick="showPassword()" th:text="#{passwChangeLabel}"></a> </li>
+                <li><a href="BikeRentalServlet?command=logout" th:text="#{logoutLabel}"></a> </li>
+            </ul>
+        </li>
+        <li style="float: right; color: white; padding: 18px 0px 15px 10px;" th:text="#{userLabel}"></li>
+    </ul>
+</nav>
+<nav>
+    <ul class="nav nav-pills pull-xs-right">
+        <li class="nav-item active">
+            <a class="nav-link text-white"
+               href="?lang=ru"
+               th:text="#{locButtonRU}">
+            </a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link text-white"
+               href="?lang=en"
+               th:text="#{locButtonEN}">
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<div style="margin-top: 20px" >
+    <div th:src="@{/templates/fragments/editUser.html}"></div>
+</div>
+<!-- --------------------------end of menu -------------------------------- -->
+<div id="body">
+    <div th:if="${order ne null}">
+        <form th:action="@{/order/closeOrder}" action="/order/closeOrder" method="post" id="bikeOrder" th:object="${order}">
+            <div class="container" id="createOrder" style="margin-top: 15px">
+                <div align="center" style="border-bottom: 1px solid blue; font-size: 25px; padding-bottom: 5px" th:text="#{currentOrderLabel}">:</div>
+                <div class="row" style="padding-top: 5px; padding-left: 5px">
+                    <div class="col-md-6" style="padding-top: 5px; margin-left: 10px; background: white" th:each="bike: ${order.bikes}">
+                        <div class="row"
+                             style="margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid gray;">
+                            <div class="col-md-6" th:text="#{bikeNubmerLabel}">:</div>
+                            <div class="col-md-6" th:text="${bike.id}"></div>
+                        </div>
+
+                        <div class="row"
+                             style="margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid gray;">
+                            <div class="col-md-6" th:text="#{brandLabel}"></div>
+                            <div class="col-md-6" th:text="#{modelLabel}">:</div>
+                            <div class="col-md-6" th:text="${bike.brand}"></div>
+                            <div class="col-md-6" th:text="${bike.model}"></div>
+                        </div>
+
+                        <div class="row"
+                             style="margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid gray;">
+                            <div class="col-md-6"  th:text="#{characteristicsLabel}">:</div>
+                            <div class="col-md-6"  th:text="${bike.bikeType.type}"></div>
+                        </div>
+
+                        <div class="row"
+                             style="margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid gray;">
+                            <div class="col-md-6" th:text="#{parkingLabel}">:</div>
+                            <div class="col-md-6" th:text="${bike.rentalPoint.name}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div align="center" style="border-bottom: 1px solid gray; font-size: 20px; margin-top:20px" th:text="#{timeOfOrderLabel}">:</div>
+
+                <div class="row" style="margin-top:10px">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2" style="font-size: 20px">
+                        <label style="float:left" th:text="#{daysLabel}">: </label>
+                        <label style="float:left;" id="days" th:text="${session.days}">0</label>
+                    </div>
+
+                    <div class="col-md-2" style="font-size: 20px">
+                        <label style="float:left;" th:text="#{hoursLabel}">: </label>
+                        <label style="float:left;" id="hours" th:text="${session.hours}">0</label>
+                    </div>
+
+                    <div class="col-md-2" style="font-size: 20px">
+                        <label style="float:left;" th:text="#{minutesLabel}">: </label>
+                        <label style="float:left;" id="minutes" th:text="${session.minutes}">0</label>
+                    </div>
+
+                    <div class="col-md-2" style="font-size: 20px">
+                        <label style="float:left;" th:text="#{secondsLabel}">: </label>
+                        <label style="float:left;" id="seconds" th:text="${session.seconds}">0</label>
+                    </div>
+                </div>
+
+                <div align="center" style="border-bottom: 1px solid gray; font-size: 20px; margin-top:20px" th:text="#{closeOrderLabel}">:</div>
+                <div align="center" style="margin-top:20px">
+                    <input type="submit" class="btn btn-primary" style="background-color: green" th:value="#{returnBikeLabel}">
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+<input type="hidden" id="secondsInputParam" th:value="${session.seconds}">
+<input type="hidden" id="minutesInputParam" th:value="${session.minutes}">
+<input type="hidden" id="hoursInputParam" th:value="${session.hours}">
+<input type="hidden" id="daysInputParam" th:value="${session.days}">
+<input type="hidden" id="orderUser" th:value="${message}">
+
+<script type="text/javascript"   th:src="@{/style/js/user.js}"> showOrderTime()</script>
+<div th:src="@{/templates/messages.html}"></div>
+<div th:src="@{/templates/footer.html}"></div>
+</body>
+</html>

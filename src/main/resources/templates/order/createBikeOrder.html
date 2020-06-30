@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../static/style/header.css" rel="stylesheet" th:href="@{/style/header.css}" />
+    <title th:text="#{title}"></title>
+</head>
+
+<body>
+<div th:src="@{/fragments/smallMenu.html}"></div>
+<div class="container-fluid" style="padding-left: 15px; padding-right: 15px">
+    <div class="row">
+        <div class="col-sm-12" style="background: #F0FFF0; padding-left: 10px; padding-bottom: 50px">
+            <form method="POST" th:action="@{/order/addBikeToOrder}" th:object="${bike}">
+                <!-- --------------------------------select rental point ------------------------------------ -->
+                <div>
+                    <label style="margin-left:10px; margin-top: 20px" th:text="#{rentalPointsLabel}">:
+                    </label>
+                    <select name="rentalPointId" th:field="*{rentalPoint.id}" class="form-control">
+                        <option selected value="0" th:text="#{chooseRentalPoint}"></option>
+                        <div th:each="rentalPoint:${rentalPointList}">
+                            <option th:value="${rentalPoint.id}"
+                                    th:text="${rentalPoint.address}"></option>
+                        </div>
+                    </select>
+                </div>
+                <!-- --------------------------------select bikeType ------------------------------------ -->
+                <div>
+                    <label style="margin-left:10px; margin-top: 20px" th:text="#{bikeTypeLabel}">:</label>
+                    <select name="bikeTypeId" th:field="*{bikeType.id}" class="form-control" >
+                        <option selected value="0"  th:text="#{chooseBikeTypeLabel}"></option>
+                        <div th:each="item:${bikeTypeList}">
+                            <option th:value="${item.id}"  th:text="${item.type}"></option>
+                        </div>
+                    </select>
+                </div>
+                <!-- --------------------------------select number days ------------------------------------ -->
+                <!--<div class="form-group">-->
+                    <!--<label style="text-align:center; margin-top: 20px" th:text="#{numberDaysLabel}">:-->
+                    <!--</label>-->
+                    <!--<input type="number" class="form-control" min="1" max="9" name="days" value=""-->
+                           <!--th:placeholder="#{numberOfDaysPlaceHolder}"-->
+                           <!--required-->
+                           <!--pattern="[1-9]"-->
+                           <!--oninvalid="setCustomValidity('${countWarnLabel}')"-->
+                           <!--oninput="setCustomValidity('')"/>"-->
+                <!--</div>-->
+                <div style="text-align: center; margin-top: 25px">
+                    <!--<input type="hidden" name="command" value="get_price_bike"/>-->
+                    <input type="submit" class="btn btn-primary" th:value="#{addBikeLabel}"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div  th:each="bike : ${#httpSession.getAttribute('order.bikes')}">
+    <p th:text="${bike}"></p>
+</div>
+<form method="post" th:action="@{/order/createOrder}" th:object="${#httpSession.getAttribute('order')}">
+    <div th:text="${#httpSession.getAttribute('order')}"></div>
+    <input type="submit" th:value="#{createOrderLabel}">
+</form>
+
+<!--<div th:if="${totalPrice ne null}">-->
+    <!--<form action="BikeRentalServlet" method="post">-->
+        <!--<div class="container-fluid" style="padding-left: 15px; padding-right: 15px">-->
+            <!--<div class="row"-->
+                 <!--style="font-size: 20px; font-weight: bold; padding-top: 5px; padding-left: 5px; color: #000080	">-->
+                <!--<div class="col-sm-12" style="background:#F0FFF0">-->
+                    <!--<div class="col-sm-12" style="padding-top:10px;  background: white">-->
+                        <!--<label style="font-size: 16px;" th:text="#{priceByDays}" th:value="${totalPrice}">-->
+                        <!--</label>-->
+                    <!--</div>-->
+
+                    <!--<div style="text-align:center; margin-top: 25px">-->
+                        <!--<input type="hidden" name="command" value="order_bike"/>-->
+                        <!--<input type="hidden" name="totalPrice" th:value="${totalPrice}"/>-->
+                        <!--<input type="submit" class="btn btn-primary" th:value="#{orderLabel}"/>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</form>-->
+<!--</div>-->
+<div th:insert="messages.html"></div>
+</body>
+</html>

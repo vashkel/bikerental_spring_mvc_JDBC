@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/style/header.css}" />
+    <link rel="stylesheet" th:href="@{/style/commonStyles.css}" />
+
+</head>
+<body>
+<nav class="navbar bg-primary navbar-dark">
+    <h1 class="text-white" th:text="#{title}"/>
+    <ul class="nav nav-pills pull-xs-right">
+        <li class="nav-item active">
+            <a href="/login"
+               id="choose_type"
+               class="nav-link text-white"
+               onclick="showFunc()"
+               th:text="#{loginLabel}">
+            </a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link text-white"
+               href="?lang=ru"
+               th:text="#{locButtonRU}"
+               onclick="location.href=this.href+isLogin;return false;">
+            </a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link text-white"
+               href="?lang=en"
+               th:text="#{locButtonEN}"
+               onclick="location.href=this.href+isLogin;return false;">
+            </a>
+        </li>
+    </ul>
+</nav>
+<div id="calend">
+    <div id="registration" class="container"  >
+        <div class="container">
+            <div style="text-align:center; font-size: 20px" th:text="#{registerFieldLabel}"></div>
+            <br>
+            <form action="#" th:action="@{/templates/user/registration.html}" method="post" th:object="${newUser}" id="userDataForm" onsubmit="checkUserData(); return false">
+                <div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label th:text="#{loginLabel}"*></label>
+                        </div>
+                        <div class="col-md-4">
+                            <input  type="text"
+                                    th:field="*{login}"
+                                    name="login"
+                                    class="form-control"
+                                    th:placeholder="#{loginPlaceholder}"
+                                    required/>
+                            <span class="validationError"
+                                  th:if="${#fields.hasErrors('login')}"
+                                  th:errors="*{login}"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label th:text="#{nameLabel}">*</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text"
+                                   th:field="*{name}"
+                                   name="name"
+                                   class="form-control"
+                                   th:placeholder="#{namePlaceholder}"
+                                   pattern="[a-zA-Zа-яА-ЯЁё]{3,15}"
+                                   required/>
+                            <span class="validationError"
+                                  th:if="${#fields.hasErrors('name')}"
+                                  th:errors="*{name}"></span>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label th:text="#{surnameLabel}">*
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text"
+                                   th:field="*{surname}"
+                                   name="surname"
+                                   class="form-control"
+                                   th:placeholder="#{surnamePlaceholder}"
+                                   required
+                                   pattern="[a-zA-Zа-яА-ЯЁё]{3,15}"
+                                   th:oninvalid="#{surnameWarnLabel}"
+                                   oninput="setCustomValidity('')"/>
+                            <span class="validationError"
+                                  th:if="${#fields.hasErrors('surname')}"
+                                  th:errors="*{surname}"></span>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label th:text="#{emailLabel}">*</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="email"
+                                   th:field="*{email}"
+                                   name="email"
+                                   class="form-control"
+                                   th:placeholder="#{emailPlaceholder}"
+                                   required
+                                   th:oninvalid="#{emailWarnLabel}"
+                                   oninput="setCustomValidity('')"/>
+                            <span class="validationError"
+                                  th:if="${#fields.hasErrors('email')}"
+                                  th:errors="*{email}">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label th:text="#{balanceLabel}">*</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text"
+                                   th:field="*{balance}"
+                                   name="balance"
+                                   class="form-control"
+                                   th:placeholder="#{balancePlaceholder}"/>
+                            <span class="validationError"
+                                  th:if="${#fields.hasErrors('balance')}"
+                                  th:errors="*{balance}"></span>
+                        </div>
+                        </div>
+                    </div>
+                <div class="row" style="margin-top: 20px">
+                    <div class="col-md-4">
+                        <label  th:text="#{passwordLabel}">*</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input 	type="password"
+                                  th:field="*{password}"
+                                  name="password"
+                                  class="form-control"
+                                  id="passw1"
+                                  required
+                                  th:placeholder="#{passwordPlaceholder}"
+                                  oninvalid="setCustomValidity('${password_warn}')"
+                                  oninput="setCustomValidity('')"/>
+                        <span class="validationError"
+                              th:if="${#fields.hasErrors('password')}"
+                              th:errors="*{password}"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label th:text="#{againPasswordLabel}">*</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input 	type="password"
+                                  class="form-control"
+                                  id="passw2"
+                                  required
+                                  th:placeholder="#{againPasswordPlaceholder}"
+                                  oninvalid="setCustomValidity('${password_warn}')"
+                                  oninput="setCustomValidity('')"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4" align="center">
+                        <input type="submit" th:value="#{registrationButton}" class="btn btn-primary" >
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:src="@{/style/js/login.js}"></script>
+<script th:src="@{/style/js/password.js}"></script>
+<div th:insert="messages.html"></div>
+</body>
+</html>

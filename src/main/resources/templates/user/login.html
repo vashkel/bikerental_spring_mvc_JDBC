@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/style/header.css}" />
+    <link rel="stylesheet" th:href="@{/style/commonStyles.css}" />
+</head>
+<body>
+<input type="hidden" name="isLoginElement" value="${loginMenu}" id="isLoginElement"/>
+<nav class="navbar bg-primary navbar-dark">
+    <h1 class="text-white" th:text="#{title}"/>
+    <ul class="nav nav-pills pull-xs-right">
+        <li class="nav-item active">
+            <a href="/registration"
+               id="choose_type"
+               class="nav-link text-white"
+               onclick="showFunc()"
+               th:text="#{registrationLabel}">
+            </a>
+        <li class="nav-item active">
+            <a class="nav-link text-white"
+               href="?lang=ru"
+               th:text="#{locButtonRU}">
+            </a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link text-white"
+               href="?lang=en"
+               th:text="#{locButtonEN}">
+            </a>
+        </li>
+    </ul>
+</nav>
+<div id="authorization" class="container" style="display: block" >
+    <div style="text-align:center; font-size: 20px" th:text="#{loginFieldLabel}"></div>
+    <br>
+    <form method="POST" th:action="@{/login}"  th:object="${userLogin}" id="loginForm" >
+        <div class="row">
+            <div class="col-md-4">
+                <label th:text="#{loginLabel}"></label>
+            </div>
+            <div class="col-md-4">
+                <input type="text" th:field="*{login}"/>
+                <span class="validationError"
+                      th:if="${#fields.hasErrors('login')}"
+                      th:errors="*{login}"></span>
+        </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label th:text="#{passwordLabel}"></label>
+            </div>
+            <div class="col-md-4">
+                <input type="password" th:field="*{password}"/>
+                <span class="validationError"
+                        th:if="${#fields.hasErrors('password')}"
+                        th:errors="*{password}"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4" align="center">
+                <input type="submit" class="btn btn-primary" th:value="#{enterButton}">
+            </div>
+        </div>
+    </form>
+</div>
+<script th:src="@{/style/js/login.js}"></script>
+<div th:insert="footer.html"></div>
+<div th:insert="messages.html"></div>
+</body>
+</html>
