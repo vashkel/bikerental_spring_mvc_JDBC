@@ -39,7 +39,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAllOrderByUser(User user) throws ServiceException {
-        return null;
+        List<Order> orders;
+        try {
+            orders = orderDAO.getAllOrdersByUserId(user.getId());
+        } catch (DAOException e) {
+            LOGGER.error("An exception was thrown when searching for all users", e);
+            throw new ServiceException("An exception was thrown when searching for all orders by userId", e.getMessage());
+        }
+        return orders;
     }
 
     @Override

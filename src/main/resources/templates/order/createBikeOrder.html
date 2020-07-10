@@ -10,7 +10,7 @@
 </head>
 
 <body>
-<div th:src="@{/fragments/smallMenu.html}"></div>
+<div th:insert="~{/fragments/smallMenu :: smallMenu}">
 <div class="container-fluid" style="padding-left: 15px; padding-right: 15px">
     <div class="row">
         <div class="col-sm-12" style="background: #F0FFF0; padding-left: 10px; padding-bottom: 50px">
@@ -38,18 +38,7 @@
                     </select>
                 </div>
                 <!-- --------------------------------select number days ------------------------------------ -->
-                <!--<div class="form-group">-->
-                    <!--<label style="text-align:center; margin-top: 20px" th:text="#{numberDaysLabel}">:-->
-                    <!--</label>-->
-                    <!--<input type="number" class="form-control" min="1" max="9" name="days" value=""-->
-                           <!--th:placeholder="#{numberOfDaysPlaceHolder}"-->
-                           <!--required-->
-                           <!--pattern="[1-9]"-->
-                           <!--oninvalid="setCustomValidity('${countWarnLabel}')"-->
-                           <!--oninput="setCustomValidity('')"/>"-->
-                <!--</div>-->
                 <div style="text-align: center; margin-top: 25px">
-                    <!--<input type="hidden" name="command" value="get_price_bike"/>-->
                     <input type="submit" class="btn btn-primary" th:value="#{addBikeLabel}"/>
                 </div>
             </form>

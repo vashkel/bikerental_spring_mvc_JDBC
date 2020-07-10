@@ -9,14 +9,13 @@ import org.springframework.context.annotation.Scope;
 @Data
 public class Authorization {
 
-    private Boolean authorized;
+    private Boolean authorized = false;
 
     public Boolean getAuthorized() {
         return authorized;
     }
 
-    public Authorization setAuthorized(Boolean authorized) {
+    public void setAuthorized(Boolean authorized) {
         this.authorized = authorized;
-        return this;
     }
 }

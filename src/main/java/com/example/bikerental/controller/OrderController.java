@@ -26,14 +26,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
+@SessionAttributes("order")
 @RequestMapping(path = "/order")
-//@SessionAttributes("order")
 public class OrderController {
     private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
 
@@ -42,8 +43,6 @@ public class OrderController {
     private final BikeTypeService bikeTypeService;
     private final BikeService bikeService;
     private final OrderService orderService;
-
-
 
     @Autowired
     public OrderController(UserService userService, RentalPointService rentalPointService, BikeTypeService bikeTypeService, BikeService bikeService, OrderService orderService) {
@@ -62,9 +61,9 @@ public class OrderController {
             model.addAttribute("rentalPointList", rentalPointList);
             model.addAttribute("bikeTypeList", bikeTypesList);
             model.addAttribute("bike", new Bike());
-            if(!model.containsAttribute("order")){
-                model.addAttribute("order" , new Order());
-            }
+//            if(!model.containsAttribute("order")){
+//                model.addAttribute("order" , new Order());
+//            }
         } catch (ServiceException e) {
             LOGGER.error("Get data error, ", e);
             return "error/error" ;
@@ -84,7 +83,7 @@ public class OrderController {
     }
 
     @PostMapping("/createOrder")
-    public String createOrder(Order order, HttpServletRequest request) throws ServiceException {
+    public String createOrder(Order order, HttpServletRequest request, Model model) throws ServiceException {
         User user = (User) request.getSession().getAttribute(SessionParameter.USER.parameter());
         double userBalance = user.getBalance();
         if (userBalance < 500) {
@@ -92,8 +91,7 @@ public class OrderController {
             return "order/createBikeOrder";
         }
         order = orderService.createOrder(order.getBikes(), user);
-
-//        request.getSession().setAttribute(SessionParameter.ORDER.parameter(), order);
+        model.addAttribute("order" , order);
         RequestTimeParameter.addParam(request, order.getStart_date());
         return "redirect:/user";
     }
@@ -105,15 +103,27 @@ public class OrderController {
             if(isPerformed){
                 sessionStatus.setComplete();
                 request.setAttribute(RequestParameter.MESSAGE.parameter(), PageMessage.ORDER_CLOSE.message());
-                User user = userService.getByID(order.getUser().getId());
-//                request.getSession().setAttribute("user", updatedUser);
+                User updatedUser = userService.getByID(order.getUser().getId());
+                request.getSession().setAttribute("user", updatedUser);
             }
         } catch (ServiceException e) {
             LOGGER.error("Exception occurred while closing order,", e);
             return "redirect:/error";
         }
-        sessionStatus.setComplete();
         return "redirect:/user";
+    }
+
+    @GetMapping("/userOrders")
+    public String getUserOrders(@SessionAttribute("user") User user, Model model) throws ServiceException {
+           try {
+               List<Order> orderList = orderService.getAllOrderByUser(user);
+               model.addAttribute("orderList", orderList);
+           }catch (ServiceException e){
+               LOGGER.error("Get orders by user error : ", e);
+               return "redirect:error/error";
+           }
+
+        return "order/userOrders";
     }
 
 }

@@ -7,6 +7,8 @@ import com.example.bikerental.entity.BikeStatusEnum;
 import com.example.bikerental.entity.Order;
 import com.example.bikerental.entity.User;
 import com.example.bikerental.exception.DAOException;
+import com.example.bikerental.mapper.BikeIdMapper;
+import com.example.bikerental.mapper.BikeMapper;
 import com.example.bikerental.mapper.OrderMapper;
 import com.example.bikerental.util.PageInfo;
 import org.apache.logging.log4j.LogManager;
@@ -58,15 +60,12 @@ public class OrderDAOImpl implements OrderDAO {
             "LEFT JOIN bike_types AS bt ON bk.bike_type_id = bt.id " +
             "LEFT JOIN rental_points AS rp ON bk.rental_point_id = rp.id WHERE o.id=?";
 
-    private static final String SQL_GET_ORDER_BY_USER_ID = "SELECT o.id, o.start_date, o.end_date,o.user_id, u.id," +
-            " o.bike_id, bk.id, o.status, o.sum ,u.name, u.surname, u.login, u.password, u.role, u.tel, u.state," +
-            " u.balance,bk.brand, bk.model, bk.bike_type_id, bt.id, bk.rental_point_id, rp.id, bk.status, " +
-            "bt.type, rp.name,rp.adress, rp.tel " +
-            "FROM orders AS o " +
+    private static final String SQL_GET_ORDER_BY_USER_ID ="SELECT o.id, o.start_date, o.end_date,o.user_id, o.status, " +
+            "o.sum , u.id, u.name, u.surname, u.login, u.password, u.role, u.tel, u.state," +
+            "u.balance FROM orders AS o " +
             "LEFT JOIN users AS u ON o.user_id = u.id " +
-            "LEFT JOIN bikes AS bk ON o.bike_id = bk.id " +
-            "LEFT JOIN bike_types AS bt ON bk.bike_type_id = bt.id " +
-            "LEFT JOIN rental_points AS rp ON bk.rental_point_id = rp.id WHERE u.id=? AND o.end_date IS NOT NULL ";
+            "WHERE u.id=? AND o.end_date IS NOT NULL ";
+
 
     private static final String SQL_GET_ALL_ORDERS = "SELECT o.id, o.start_date, o.end_date,o.user_id, u.id," +
             " o.bike_id, bk.id, o.status, o.sum ,u.name, u.surname, u.login, u.password, u.role, u.tel, u.state," +
@@ -106,7 +105,26 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public List<Order> getAllOrdersByUserId(long userId) throws DAOException {
-        return null;
+            List<Order> orderList;
+            List<Long> bikesID ;
+       try {
+          orderList = jdbcTemplate.query(SQL_GET_ORDER_BY_USER_ID, new OrderMapper(), userId);
+          for (Order order : orderList) {
+              bikesID = jdbcTemplate.query("SELECT bike_id from order_bikes where order_id=?", new BikeIdMapper(), order.getId());
+              for (Long bikeId : bikesID){
+                Bike bike = jdbcTemplate.queryForObject("SELECT bikes.id, bikes.brand, bikes.model, bikes.bike_type_id, bike_types.type, bikes.rental_point_id,\n" +
+                          "  rental_points.name, rental_points.adress, rental_points.tel ,bikes.status\n" +
+                          "  FROM bikes LEFT JOIN bike_types ON bikes.bike_type_id = bike_types.id\n" +
+                          "  LEFT JOIN rental_points ON bikes.rental_point_id = rental_points.id WHERE bikes.id = ?" , new Object[]{bikeId}, new BikeMapper());
+                order.addBike(bike);
+              }
+          }
+       }catch (EmptyResultDataAccessException e){
+           return null;
+       }catch (DataAccessException e ){
+           throw new DAOException("Exception was thrown during get All orders By user id from DB : ", e);
+       }
+       return orderList;
     }
 
     @Override

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/style/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/style/header.css}" />
+    <link rel="stylesheet" th:href="@{/style/commonStyles.css}" />
+</head>
+<body>
+<div th:with="menuLabel=${ordersLabel}" th:scope="page">
+<div th:insert="~{/fragments/smallMenu :: smallMenu}">
+<div id="body" style="margin: 20px">
+        <div th:if="${orderList ne null}">
+        <div style="text-align:center; margin-bottom:10px; font-size: 28px" th:text="ordersLabel"></div>
+        <div style="margin-left: 20px">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th th:text="orderNumberLabel"> </th>
+                            <th th:text="orderStartDate"> </th>
+                            <th th:text="orderFinishDate"> </th>
+                            <th th:text="userLabel"> </th>
+                            <th th:text="bikeLabel"> </th>
+                            <th th:text="rentalPointLabel"> </th>
+                            <th th:text="minutesLabel"> </th>
+                            <th th:text="bikePriceLabel"> </th>
+                        </tr>
+                        </thead>
+                            <tbody>
+                            <tr th:each=" order : ${orderList}">
+                                <td th:text="${order.id}"></td>
+                                <td th:text="${order.start_date}"> </td>
+                                <td th:text="${order.end_date}"></td>
+                                <td th:text="${order.user.name}"></td>
+
+                                <div th:each="bike: ${order.bikes}">
+                                <td th:text="${bike.bikeType.type}"></td>
+                                <td th:text="${bike.rentalPoint.name}" ></td>
+                                </div>
+                                <td th:text="${order.sum}"></td>
+                                <td>
+                                    <!--<ctg:calculateTime finishTime="${order.endDate}" startTime="${order.startDate}"/>-->
+                                </td>
+                            </tr>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div>
+    <!--</c:if>-->
+</div>
+<!-- ------------------------ end of bike order list ------------------------------ -->
+<script type="text/javascript" th:src="@{/style/js/calendar.js}">
+    var fromDate = new Calendar();
+    fromDate.init({lng: '${sessionScope.local}'});
+    fromDate.add('fromDate', 'fromDate');
+    var toDate = new Calendar();
+    toDate.init({lng: '${sessionScope.local}'});
+    toDate.add('toDate', 'toDate');
+</script>
+</body>
+</html>

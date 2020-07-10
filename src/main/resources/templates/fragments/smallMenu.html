@@ -5,22 +5,22 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<nav>
+<nav th:fragment="smallMenu">
     <ul>
         <li class="logo" th:text="#{title}"></li>
-        <li style="float:left; margin-left: 25%; padding-top:6px; font-size: 28px; font-weight: bold; text-decoration: underline; color: white;" th:text="${menuLabel}"></li>
+        <li style="float:left; margin-left: 25%; padding-top:6px; font-size: 28px; font-weight: bold; text-decoration: underline; color: white;" th:value="${menuLabel}"></li>
         <li style="float:right; margin-right:10px">
-            <a href="BikeRentalServlet?command=logout" th:text="#{logoutLabel}"></a>
+            <a href="/logout" th:text="#{logoutLabel}"></a>
         </li>
         <li style="float:right">
             <a href="BikeRentalServlet?command=home" th:text="#{homeLabel}"></a>
         </li>
-        <li style="float:right; color: white; font-weight: bold; padding: 18px 0px 15px 10px;" th:text="${session.user.name}"></li>
-        <li th:if="${session.user.role eq 'ADMIN'}">
+        <li style="float:right; color: white; font-weight: bold; padding: 18px 0px 15px 10px;" th:text="${#httpSession.getAttribute('user.name')}"></li>
+        <li th:if="${#httpSession.getAttribute('user.role') eq 'ADMIN'}">
         <a style="float:right; color: white; padding: 18px 0px 15px 10px;" th:text="#{adminLabel}">
         </a>
     </li>
-        <li th:if="${session.user.role eq 'USER'}" >
+        <li th:if="${#httpSession.getAttribute('user.role') eq 'USER'}" >
             <a style="float:right; color: white; padding: 18px 0px 15px 10px;" th:text="#{userLabel}">
             </a>
         </li>

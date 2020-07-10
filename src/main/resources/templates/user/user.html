@@ -15,13 +15,13 @@
         <div th:if="${order eq null}">
             <li><a href="/order"  th:text="#{createOrderLabel}"></a></li>
         </div>
-        <li><a href="BikeRentalServlet?command=find_user_orders" th:text="#{ordersLabel}">></a></li>
+        <li><a href="/order/userOrders" th:text="#{ordersLabel}">></a></li>
         <li><a href="BikeRentalServlet?command=rental_points_page" th:text="#{contacts}"></a></li>
         <li style="float: right; margin-right: 50px"><a href="#" th:text="${session.user.name}"></a>
             <ul>
                 <li><a href="#" onclick="showProfile()" th:text="#{profileLabel}"></a> </li>
                 <li><a href="#" onclick="showPassword()" th:text="#{passwChangeLabel}"></a> </li>
-                <li><a href="BikeRentalServlet?command=logout" th:text="#{logoutLabel}"></a> </li>
+                <li><a href="/logout" th:text="#{logoutLabel}"></a> </li>
             </ul>
         </li>
         <li style="float: right; color: white; padding: 18px 0px 15px 10px;" th:text="#{userLabel}"></li>
