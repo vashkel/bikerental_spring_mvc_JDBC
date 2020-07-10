@@ -2,13 +2,12 @@ package com.example.bikerental.entity;
 
 import com.example.bikerental.util.PageConstant;
 import lombok.Data;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
-@SessionAttributes("newUser")
+//@SessionAttributes("newUser")
 public class User extends Entity {
     private static final long serialVersionUID = 7164993002496265554L;
     @Pattern(regexp = "[a-zA-Zа-яА-ЯЁё]{3,15}")

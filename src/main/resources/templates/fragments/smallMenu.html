@@ -13,7 +13,7 @@
             <a href="/logout" th:text="#{logoutLabel}"></a>
         </li>
         <li style="float:right">
-            <a href="BikeRentalServlet?command=home" th:text="#{homeLabel}"></a>
+            <a href="/homePage" th:text="#{homeLabel}"></a>
         </li>
         <li style="float:right; color: white; font-weight: bold; padding: 18px 0px 15px 10px;" th:text="${#httpSession.getAttribute('user.name')}"></li>
         <li th:if="${#httpSession.getAttribute('user.role') eq 'ADMIN'}">

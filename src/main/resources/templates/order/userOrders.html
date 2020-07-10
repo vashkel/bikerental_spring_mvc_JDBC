@@ -11,7 +11,7 @@
 </head>
 <body>
 <div th:with="menuLabel=${ordersLabel}" th:scope="page">
-<div th:insert="~{/fragments/smallMenu :: smallMenu}">
+<div th:insert="~{/fragments/smallMenu :: smallMenu}"></div>
 <div id="body" style="margin: 20px">
         <div th:if="${orderList ne null}">
         <div style="text-align:center; margin-bottom:10px; font-size: 28px" th:text="ordersLabel"></div>
