@@ -42,7 +42,7 @@ public interface BikeDAO extends AbstractDAO<Bike> {
 
     int changeStatusById(long bikeId, String status) throws DAOException;
 
-    Map<String,String> getAvailableBikesByRentalPointId(long rentalPointId) throws DAOException;
+    Map<String, String> getAvailableBikesByRentalPointId(long rentalPointId) throws DAOException;
 
     List<Bike> getBikesByOpenOrder(long orderId) throws DAOException;
 }

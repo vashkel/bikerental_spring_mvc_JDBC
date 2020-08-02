@@ -33,6 +33,7 @@ public class MyLogger {
         this.authorization = authorization;
 
     }
+
     @Pointcut("within(@org.springframework.stereotype.Repository *)" +
             "|| within(@org.springframework.stereotype.Service *)" +
             "|| within(@org.springframework.stereotype.Controller *)")
@@ -46,7 +47,6 @@ public class MyLogger {
             " || within(com.example.bikerental.controller..*)")
     public static void applicationPackagePointcut() {
     }
-
 
 
     @Before("execution(* com.example.bikerental.controller.*.*(..))")
@@ -76,8 +76,9 @@ public class MyLogger {
             throw e;
         }
     }
-@AfterReturning("within(com.example.bikerental.dao..*) && args(result)")
-    public void afterReturn(JoinPoint joinPoint, Object result){
+
+    @AfterReturning("within(com.example.bikerental.dao..*) && args(result)")
+    public void afterReturn(JoinPoint joinPoint, Object result) {
         log.info("**************************");
         log.info("************** LOG : Error************");
         log.error("Result of method invocation : " + result);

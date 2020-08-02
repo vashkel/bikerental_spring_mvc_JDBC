@@ -54,7 +54,7 @@ public class RentalCostDAOImpl implements RentalCostDAO {
     }
 
     @Override
-    public void delete(RentalCost entity) throws DAOException {
+    public void delete(Long id) throws DAOException {
 
     }
 

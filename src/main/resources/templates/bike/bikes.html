@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <link href="../../static/style/header.css" rel="stylesheet" th:href="@{/style/header.css}" />
+    <title th:text="#{title}"></title>
+</head>
+<body>
+<div th:insert="~{/fragments/smallMenu :: smallMenu}"></div>
+<!---------------------------------------------BikeList--------------------->
+<div id="body" style="margin: 20px">
+        <div style="text-align:center; margin-bottom:10px; font-size: 28px" th:text="#{bikesLabel}"></div>
+        <div style="margin-left: 20px">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th th:text="#{bikeNubmerLabel}"></th>
+                            <th th:text="#{brandLabel}"></th>
+                            <th th:text="#{modelLabel}"></th>
+                            <th th:text="#{bikeTypeLabel}"></th>
+                            <th th:text="#{parkingLabel}"></th>
+                            <th th:text="#{statusBikeLabel}"></th>
+                            <th th:text="#{changes}"></th>
+                        </tr>
+                        </thead>
+                            <tbody>
+                            <tr th:each="bike: ${bikeList}">
+                                <td th:text="${bike.id}"></td>
+                                <td th:text="${bike.brand}"></td>
+                                <td th:text="${bike.model}"></td>
+                                <td th:text="${bike.bikeType.type}"></td>
+                                <td>
+                                    <table class="table table-sm" >
+                                        <tr>
+                                            <td th:text="${bike.rentalPoint.id}"> </td>
+                                            <td th:text="${bike.rentalPoint.name}"></td>
+                                            <td th:text="${bike.rentalPoint.address}"></td>
+                                        </tr>
+
+                                    </table>
+                                </td>
+                                <td th:text="${bike.bikeStatus}"></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn btn-primary dropdown-toggle"
+                                                data-toggle="dropdown" th:text="#{change}">
+
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" th:href="@{/bike/delete(bikeId=${bike.id})}"
+                                               th:text="#{deleteLabel}"></a>
+                                            <a class="dropdown-item"
+                                               th:href="@{/bike/changeStatus(bikeId=${bike.id},status=${bike.bikeStatus})}"
+                                               th:text="#{changeStateLabel}"></a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+</div>
+<div th:insert="~{/fragments/messages :: messages}"></div>
+<div th:insert="~{/fragments/footer :: footer}"></div>
+</body>
+</html>

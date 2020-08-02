@@ -2,6 +2,7 @@ package com.example.bikerental.service.impl;
 
 import com.example.bikerental.dao.UserDAO;
 import com.example.bikerental.entity.User;
+import com.example.bikerental.entity.UserStateEnum;
 import com.example.bikerental.exception.DAOException;
 import com.example.bikerental.exception.ExceptionMessage;
 import com.example.bikerental.exception.ServiceException;
@@ -72,9 +73,10 @@ import java.util.List;
         return users;
     }
     @Override
-    public void deleteUserById(long id) throws ServiceException {
+    public void deleteUserById(String id) throws ServiceException {
         try {
-            userDAO.deleteUserById(id);
+            long userId = Long.parseLong(id);
+            userDAO.deleteUserById(userId);
         } catch (DAOException e) {
             LOGGER.error("delete user error : " + e);
             throw new ServiceException("delete user error : " + e.getMessage());
@@ -82,7 +84,20 @@ import java.util.List;
     }
 
     @Override
-    public void changeStateById(long userId, String state) throws ServiceException {
+    public void changeStateById(String userId, String state) throws ServiceException {
+        long id = Long.parseLong(userId);
+        String changedState;
+        if(UserStateEnum.ACTIVE.toString().equals(state)){
+            changedState = UserStateEnum.BLOCKED.toString();
+        }else {
+            changedState = UserStateEnum.ACTIVE.toString();
+        }
+        try {
+            userDAO.changeStateById(id, changedState);
+        }catch (DAOException e){
+            LOGGER.error("change status of user error : " + e);
+            throw new ServiceException("change status of user error : " + e.getMessage());
+        }
 
     }
 

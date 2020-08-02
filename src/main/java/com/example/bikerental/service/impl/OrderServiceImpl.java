@@ -9,7 +9,6 @@ import com.example.bikerental.entity.User;
 import com.example.bikerental.exception.DAOException;
 import com.example.bikerental.exception.ServiceException;
 import com.example.bikerental.service.OrderService;
-import com.example.bikerental.util.PageInfo;
 import com.example.bikerental.util.RequestTimeParameter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,8 +49,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrders(PageInfo pageInfo) throws ServiceException {
-        return null;
+    public List<Order> getAllOrders() throws ServiceException {
+        List<Order> orders;
+        try {
+            orders = orderDAO.getAllOrders();
+        } catch (DAOException e) {
+            LOGGER.error("An exception was thrown while getting all orders : ", e);
+            throw new ServiceException("An exception was thrown while getting all orders : ", e.getMessage());
+        }
+        return orders;
     }
 
 

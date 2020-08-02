@@ -13,6 +13,7 @@ import com.example.bikerental.service.OrderService;
 import com.example.bikerental.service.RentalPointService;
 import com.example.bikerental.service.UserService;
 import com.example.bikerental.util.Authorization;
+import com.example.bikerental.util.PageConstant;
 import com.example.bikerental.util.PageMessage;
 import com.example.bikerental.util.RequestParameter;
 import com.example.bikerental.util.RequestTimeParameter;
@@ -26,6 +27,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -58,50 +60,61 @@ public class UserController {
         this.authorization = authorization;
     }
 
-   @GetMapping("/user")
-   public String userPage(@SessionAttribute User user, HttpServletRequest request, Model model){
+    @GetMapping("/")
+    public String loginPage(Model model) {
+        model.addAttribute("userLogin", new User());
+        return PageConstant.LOGIN_PAGE;
+    }
+
+    @GetMapping("/user")
+    public String userPage(@SessionAttribute User user, HttpServletRequest request, Model model) {
 
         if (User.UserRoleEnum.USER.equals(user.getRole())) {
-          try {
-              Order order = orderService.findOpenOrder(user);
-              if (order != null) {
-                  order.setBikes(bikeService.getBikesByOpenOrder(order.getId()));
-                  model.addAttribute(SessionParameter.ORDER.parameter(), order);
-                  RequestTimeParameter.addParam(request, order.getStart_date());
-              }
-          }catch (ServiceException e){
-          }
-       }
+            try {
+                Order order = orderService.findOpenOrder(user);
+                if (order != null) {
+                    order.setBikes(bikeService.getBikesByOpenOrder(order.getId()));
+                    model.addAttribute(SessionParameter.ORDER.parameter(), order);
+                    RequestTimeParameter.addParam(request, order.getStart_date());
+                }
+            } catch (ServiceException e) {
+            }
+        }
+        if (User.UserRoleEnum.ADMIN.equals(user.getRole())) {
+            List<RentalPoint> rentalPointList;
+            List<BikeType> bikeTypesList;
+            try {
+                rentalPointList = rentalPointService.getRentalPoints();
+                bikeTypesList = bikeTypeService.getBikeTypes();
+                request.getSession().setAttribute(RequestParameter.RENTAL_POINT_LIST.parameter(), rentalPointList);
+                request.getSession().setAttribute(RequestParameter.BIKE_TYPES_LIST.parameter(), bikeTypesList);
+                model.addAttribute(rentalPointList);
+                model.addAttribute(bikeTypesList);
+                model.addAttribute("bike", new Bike());
+            } catch (ServiceException e) {
 
-       if (User.UserRoleEnum.ADMIN.equals(user.getRole())) {
-           List<RentalPoint> rentalPointList;
-           List<BikeType> bikeTypesList;
-           try {
-               rentalPointList = rentalPointService.getRentalPoints();
-               bikeTypesList = bikeTypeService.getBikeTypes();
-               request.getSession().setAttribute(RequestParameter.RENTAL_POINT_LIST.parameter(), rentalPointList);
-               request.getSession().setAttribute(RequestParameter.BIKE_TYPES_LIST.parameter(), bikeTypesList);
-               model.addAttribute(rentalPointList);
-               model.addAttribute(bikeTypesList);
-               model.addAttribute("bike", new Bike());
-           }catch (ServiceException e){
+            }
+        }
+        return user.getRole().getHomePage();
+    }
 
-           }
-       }
-       return user.getRole().getHomePage();
-   }
+    @GetMapping("/login")
+    public String loginForm(Model model) {
+        model.addAttribute("userLogin", new User());
+        return PageConstant.LOGIN_PAGE;
+    }
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("userLogin") User userLogin, Errors errors, HttpServletRequest request, Model model) throws ServiceException {
         if (errors.hasErrors()) {
-            return "user/login";
+            return PageConstant.LOGIN_PAGE;
         }
         User user;
         try {
             user = userService.login(userLogin.getLogin(), userLogin.getPassword());
             if (user == null) {
                 request.setAttribute(RequestParameter.ERROR.parameter(), ExceptionMessage.LOGIN_PASSWORD.message());
-                return "user/login";
+                return PageConstant.LOGIN_PAGE;
             }
             authorization.setAuthorized(Boolean.TRUE);
             model.addAttribute(SessionParameter.USER.parameter(), user);
@@ -111,57 +124,76 @@ public class UserController {
             request.setAttribute(RequestParameter.ERROR.parameter(), ExceptionMessage.LOGIN_PASSWORD.message());
             return "redirect:/error ";
         }
-    return "redirect:/user";
-    }
-
-    @GetMapping("/users")
-    public String getAllUsers(Model model) throws ServiceException {
-         model.addAttribute("usersList", userService.getAllUsers());
-        return "user/users";
-    }
-
-
-    @PostMapping("/registration")
-    public String registration(@Valid @ModelAttribute("newUser") User newUser,Errors errors, Model model, HttpServletRequest request) throws ServiceException {
-        if(errors.hasErrors()){
-            return "user/registration";
-        }
-        boolean isRegistered = userService.register(newUser);
-        if (!isRegistered) {
-            request.setAttribute(SessionParameter.MESSAGE.parameter(), PageMessage.USER_ALREADY_EXIST.message());
-            return "redirect:/registration";
-        }
-        request.setAttribute(SessionParameter.MESSAGE.parameter(), PageMessage.USER_ADDED.message());
-        model.addAttribute("userLogin", new User());
-        return "user/login";
+        return "redirect:/user";
     }
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) throws ServletException {
         request.logout();
-//        request.getSession().invalidate();
         return "redirect:/login";
     }
 
-    @GetMapping("/registration")
-    public String registration(Model model){
-        model.addAttribute("newUser", new User());
-        return "user/registration";
+    @GetMapping("/users")
+    public String getAllUsers(Model model) throws ServiceException {
+        model.addAttribute("usersList", userService.getAllUsers());
+        return PageConstant.USERS_PAGE;
     }
+
+    @GetMapping("/registration")
+    public String registration(Model model) {
+        model.addAttribute("newUser", new User());
+        return PageConstant.REGISTRATION_PAGE;
+    }
+
+    @PostMapping("/registration")
+    public String registration(@Valid @ModelAttribute("newUser") User newUser, Errors errors, Model model, HttpServletRequest request) throws ServiceException {
+        if (errors.hasErrors()) {
+            return PageConstant.REGISTRATION_PAGE;
+        }
+        boolean isRegistered = userService.register(newUser);
+        if (!isRegistered) {
+            request.setAttribute(RequestParameter.MESSAGE.parameter(), PageMessage.USER_ALREADY_EXIST.message());
+            return "redirect:/registration";
+        }
+        request.setAttribute(SessionParameter.MESSAGE.parameter(), PageMessage.USER_ADDED.message());
+        model.addAttribute("userLogin", new User());
+        return PageConstant.LOGIN_PAGE;
+    }
+
+
+    @GetMapping("/delete")
+    public String delete(@RequestParam("id") String id, HttpServletRequest request) {
+        try {
+            userService.deleteUserById(id);
+            request.setAttribute(SessionParameter.MESSAGE.parameter(), PageMessage.USER_DELETED.message());
+        } catch (ServiceException e) {
+            LOGGER.error("An error occurred while the user was deleting, " + e.getMessage());
+            return "error/error";
+        }
+        return "redirect:/users";
+    }
+
+    @GetMapping("/changeState")
+    public String changeState(@RequestParam("id") String id,
+                              @RequestParam("userState") String userState,
+                              HttpServletRequest request) {
+        try {
+            userService.changeStateById(id, userState);
+            request.setAttribute(RequestParameter.MESSAGE.parameter(), PageMessage.USER_STATE_CHANGED.message());
+
+        } catch (ServiceException e) {
+            LOGGER.error("An error occurred while the user was changing state , " + e.getMessage());
+            request.setAttribute(RequestParameter.ERROR.parameter(), e.toString());
+            return "error/error";
+        }
+        return "redirect:/users";
+    }
+
+
     @GetMapping("/error")
     public String errorPage() {
         return "error/error";
     }
 
-    @GetMapping("/")
-    public String loginPage(Model model) {
-        model.addAttribute("userLogin", new User());
-        return "user/login";
-    }
 
-    @GetMapping("/login")
-    public String loginForm(Model model) {
-        model.addAttribute("userLogin", new User());
-        return "user/login";
-    }
 }

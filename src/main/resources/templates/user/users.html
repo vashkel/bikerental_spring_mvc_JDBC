@@ -4,15 +4,15 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <link href="../../static/style/header.css" rel="stylesheet" th:href="@{/style/header.css}" />
     <title th:text="#{title}"></title>
 </head>
 <body>
-<div th:src="@{/templates/fragments/smallMenu.html}"></div>
-<div id="calend" style="margin-top: 20px">
-    <div th:src="@{/templates/fragments/editUser.html}"></div>
-</div>
+<div th:insert="~{/fragments/smallMenu :: smallMenu}"></div>
 
 <div id="body" style="margin: 20px" th:if="${usersList != null}">
         <div style="text-align:center; margin-bottom:10px; font-size: 28px" th:text="#{usersLabel}">
@@ -45,17 +45,14 @@
                                 <td th:text="${user.role}"></td>
                                 <td th:text="${user.state}"></td>
                                 <td>
-                                    <a  href="BikeRentalServlet?command=delete_user&userId=${item.id}" th:text="#{deleteLabel}">
-                                    </a> <br>
-                                    <div th:if="${user.state eq 'ACTIVE'}">
-                                        <!--<a  href = "<c:url value="BikeRentalServlet?command=change_state_user&userId=${item.id}&state=blocked"-->
-                                            <!--th:text="#{changeStateLabel}"> </c:url>">-->
-                                        <!--</a>-->
-                                    </div>
-                                    <div th:if="${user.state eq 'BLOCKED'}">
-                                        <!--<a href = "<c:url value="BikeRentalServlet?command=change_state_user&userId=${item.id}&state=active"-->
-                                             <!--th:text="#{changeStateLabel}"> </c:url>-->
-                                        <!--</a>-->
+                                    <div class="dropdown">
+                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" th:text="#{change}">
+
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" th:href="@{/delete(id=${user.id})}" th:text="#{deleteLabel}"></a>
+                                            <a class="dropdown-item" th:href="@{/changeState(id=${user.id},userState=${user.state})}" th:text="#{changeStateLabel}"></a>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -65,11 +62,9 @@
             </div>
         </div>
 </div>
-
-
 <!---------------------------------------------BikeList--------------------->
-<div th:src="@{/templates/footer.html}"></div>
-<div th:src="@{/templates/messages.html}"></div>
+<div th:insert="~{/fragments/footer :: footer}"></div>
+<div th:insert="~{/fragments/messages :: messages}"></div>
 
 </body>
 </html>

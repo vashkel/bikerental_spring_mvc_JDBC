@@ -3,7 +3,13 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <link href="../../static/style/header.css" rel="stylesheet" th:href="@{/style/header.css}" />
+    <title th:text="#{title}"></title></head>
 <body>
 <nav th:fragment="smallMenu">
     <ul>
@@ -15,7 +21,7 @@
         <li style="float:right">
             <a href="/homePage" th:text="#{homeLabel}"></a>
         </li>
-        <li style="float:right; color: white; font-weight: bold; padding: 18px 0px 15px 10px;" th:text="${#httpSession.getAttribute('user.name')}"></li>
+        <li style="float:right; color: white; font-weight: bold; padding: 18px 0px 15px 10px;" th:text="${session.user.name}"></li>
         <li th:if="${#httpSession.getAttribute('user.role') eq 'ADMIN'}">
         <a style="float:right; color: white; padding: 18px 0px 15px 10px;" th:text="#{adminLabel}">
         </a>

@@ -1,5 +1,6 @@
 package com.example.bikerental.aspects;
 
+import com.example.bikerental.controller.UserController;
 import com.example.bikerental.exception.NotAuthorizedException;
 import com.example.bikerental.util.Authorization;
 import org.aspectj.lang.annotation.Aspect;
@@ -13,10 +14,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SecurityAspect {
 
+
+    private UserController userController;
     private Authorization authorization;
+
     @Autowired
-    public SecurityAspect(Authorization authorization) {
+    public SecurityAspect(Authorization authorization, UserController userController) {
         this.authorization = authorization;
+        this.userController = userController;
     }
 
     @Pointcut("within(com.example.bikerental.controller..*)")
@@ -26,7 +31,8 @@ public class SecurityAspect {
 
     @Pointcut("  !execution(* com.example.bikerental.controller.UserController.loginForm(..)) " +
             " && !execution(* com.example.bikerental.controller.UserController.login(..))" +
-            " && !execution(* com.example.bikerental.controller.UserController.loginPage(..))")
+            " && !execution(* com.example.bikerental.controller.UserController.loginPage(..))" +
+            " && !execution(* com.example.bikerental.controller.UserController.registration(..))")
     public static void notSuitableMethods() {
 
     }

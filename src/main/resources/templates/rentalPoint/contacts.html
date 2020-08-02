@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <link href="../../static/style/header.css" rel="stylesheet" th:href="@{/style/header.css}" />
+    <title th:text="#{title}"></title>
+</head>
+<body>
+
+<div th:insert="~{/fragments/smallMenu :: smallMenu}"></div>
+<div id="body" style="margin: 20px" >
+        <div style="text-align:center; margin-bottom:10px; font-size: 28px" th:text="#{rentalPointsLabel}"></div>
+        <div style="margin-left: 20px">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th th:text="#{rentalPointName}"></th>
+                            <th th:text="#{rentalPointAddress}"></th>
+                            <th th:text="#{rentalPointTel}"></th>
+                            <th th:text="#{availableBikesLabel}"></th>
+                        </tr>
+                        </thead>
+                            <tbody>
+                            <tr th:each="rentalPoint :${rentalPointList}">
+                                <td th:text="${rentalPoint.name}"></td>
+                                <td th:text="${rentalPoint.address}"></td>
+                                <td  th:text="${rentalPoint.tel}"></td>
+                                <td>
+                                    <table class="table table-sm" >
+                                            <tr th:each=" bike : ${freeBikesByRentalPoint.get(rentalPoint.id)}" >
+                                                <td  th:text="${bike}"></td>
+                                            </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+</div>
+<div th:insert="~{/fragments/messages :: messages}"></div>
+<div th:insert="~{/fragments/footer :: footer}"></div>
+</body>
+</html>

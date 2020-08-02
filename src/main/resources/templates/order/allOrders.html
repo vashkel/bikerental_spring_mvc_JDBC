@@ -12,70 +12,71 @@
     <title th:text="#{title}"></title>
 </head>
 <body>
-<div th:with="menuLabel=${ordersLabel}" th:scope="page">
 <div th:insert="~{/fragments/smallMenu :: smallMenu}"></div>
 <div id="body" style="margin: 20px">
-        <div th:if="${orderList ne null}">
-        <div style="text-align:center; margin-bottom:10px; font-size: 28px" th:text="ordersLabel"></div>
+        <div style="text-align:center; margin-bottom:10px; font-size: 28px"th:text="#{ordersLabel}" ></div>
         <div style="margin-left: 20px">
             <div class="row">
                 <div class="col-md-12">
                     <table class="table">
                         <thead>
                         <tr>
-                            <th th:text="#{orderNumberLabel}"> </th>
-                            <th th:text="#{orderStartDate}"> </th>
-                            <th th:text="#{orderFinishDate}"> </th>
-                            <th th:text="#{userLabel}"> </th>
-                            <th th:text="#{bikeLabel}"> </th>
-                            <th th:text="#{rentalPointLabel}"> </th>
-                            <th th:text="#{minutesLabel}"> </th>
-                            <th th:text="#{bikePriceLabel}"> </th>
+                            <th th:text="#{orderNumberLabel}"></th>
+                            <th th:text="#{orderStartDate}"></th>
+                            <th th:text="#{orderFinishDate}"></th>
+                            <th th:text="#{userLabel}"></th>
+                            <th th:text="#{bikeLabel}"></th>
+                            <th th:text="#{bikePriceLabel}"></th>
+                            <th th:text="#{rentalPointLabel}"></th>
+                            <th th:text="#{minutesLabel}"></th>
                         </tr>
                         </thead>
-
-                        <tbody>
-                            <tr th:each=" order : ${orderList}">
+                            <tbody>
+                            <tr th:each="order : ${orderListAllUsers}">
                                 <td th:text="${order.id}"></td>
-                                <td th:text="${order.start_date}"> </td>
-                                <td th:text="${order.end_date}"></td>
+                                <td></td>
+                                <td></td>
                                 <td th:text="${order.user.name}"></td>
                                 <td>
                                     <table class="table table-sm" >
-                                       <tr th:each="bike: ${order.bikes}">
+                                        <tr th:each="bike: ${order.bikes}">
                                             <td th:text="${bike.bikeType.type}"> </td>
-                                       </tr>
-                                    </table>
-                                </td>
-                                <td>
-                                    <table class="table table-sm" >
-                                       <tr th:each="bike: ${order.bikes}">
-                                          <td th:text="${bike.rentalPoint.name}"></td>
-                                       </tr>
+                                        </tr>
                                     </table>
                                 </td>
 
+                                <td th:text="${order.sum}"></td>
                                 <td>
-                                    <!--<ctg:calculateTime finishTime="${order.endDate}" startTime="${order.startDate}"/>-->
+                                    <table class="table table-sm" >
+                                        <tr th:each="bike: ${order.bikes}">
+                                            <td th:text="${bike.rentalPoint.name}"></td>
+                                        </tr>
+                                    </table>
                                 </td>
-                                <td th:text="${order.sum}" ></td>
+                                <td>
+                                    <!--<ctg:calculateTime finishTime="${item.endDate}" startTime="${item.startDate}"/>-->
+                                </td>
                             </tr>
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
         </div>
-        </div>
-    <!--</c:if>-->
+
 </div>
-<!-- ------------------------ end of bike order list ------------------------------ -->
-<script type="text/javascript" th:src="@{/style/js/calendar.js}">
-    var fromDate = new Calendar();
-    fromDate.init({lng: '${sessionScope.local}'});
-    fromDate.add('fromDate', 'fromDate');
-    var toDate = new Calendar();
-    toDate.init({lng: '${sessionScope.local}'});
-    toDate.add('toDate', 'toDate');
-</script>
+<div th:insert="~{/fragments/messages :: messages}"></div>
+<div th:insert="~{/fragments/footer :: footer}"></div>
+
+<!--<script type="text/javascript">-->
+    <!--<%@include file="/resources/js1/calendar.js"%>-->
+    <!--var fromDate = new Calendar();-->
+    <!--fromDate.init({lng: '${sessionScope.local}'});-->
+    <!--fromDate.add('fromDate', 'fromDate');-->
+
+    <!--var toDate = new Calendar();-->
+    <!--toDate.init({lng: '${sessionScope.local}'});-->
+    <!--toDate.add('toDate', 'toDate');-->
+<!--</script>-->
+
 </body>
 </html>

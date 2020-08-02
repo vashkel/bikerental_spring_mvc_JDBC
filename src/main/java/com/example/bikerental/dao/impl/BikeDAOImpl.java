@@ -11,8 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +70,7 @@ public class BikeDAOImpl implements BikeDAO {
             "WHERE bikes.rental_point_id = ? AND status = 'free' " +
             "GROUP BY bike_type_id";
 
+    private static final String SQL_CHANGE_BIKE_STATUS = "UPDATE bikes SET status = ? WHERE id = ?";
     private static final String SQL_GET_BIKES_BY_OPEN_ORDER_ID = "SELECT bikes.id, bikes.brand, bikes.model, bikes.bike_type_id, bike_types.type, bikes.rental_point_id, rental_points.name, rental_points.adress, rental_points.tel, bikes.status FROM order_bikes INNER JOIN bikes ON order_bikes.bike_id = bikes.id INNER JOIN bike_types ON bikes.bike_type_id = bike_types.id INNER JOIN rental_points ON bikes.rental_point_id = rental_points.id WHERE order_id = ?";
 
 
@@ -104,7 +109,8 @@ public class BikeDAOImpl implements BikeDAO {
     public void addSomeBikes(Bike bike, int countBike) throws DAOException {
        try{
            for (int x=0;x<countBike;x++) {
-               jdbcTemplate.update(SQL_ADD_BIKE,bike.getBrand(),bike.getModel(),bike.getBikeType().getId(),bike.getRentalPoint().getId(),bike.getBikeStatus().name());
+               jdbcTemplate.update(SQL_ADD_BIKE,bike.getBrand(), bike.getModel(), bike.getBikeType().getId(),
+                       bike.getRentalPoint().getId(), bike.getBikeStatus().name());
        }
        }catch (DataAccessException e){
            LOGGER.error("An exception while add bikes", e);
@@ -114,12 +120,39 @@ public class BikeDAOImpl implements BikeDAO {
 
     @Override
     public int changeStatusById(long bikeId, String status) throws DAOException {
+        try {
+            jdbcTemplate.update(SQL_CHANGE_BIKE_STATUS, status, bikeId);
+        }catch (DataAccessException e){
+            LOGGER.error("An exception occurred in the layer DAO while change bikeStatus to the DB", e);
+            throw new DAOException("An exception occurred in the layer DAO while change bikeStatus to the DB", e);
+        }
+
+
+
         return 0;
     }
 
     @Override
     public Map<String, String> getAvailableBikesByRentalPointId(long rentalPointId) throws DAOException {
-        return null;
+        Map bikesByType;
+        try{
+            bikesByType = jdbcTemplate.query(SQL_GET_FREE_BIKES_BY_RENTAL_POINT_ID, new ResultSetExtractor<Map>() {
+                @Override
+                public Map extractData(ResultSet rs) throws SQLException,DataAccessException {
+                    HashMap<String,String> bikesByType= new HashMap<String,String>();
+                    while (rs.next()) {
+                        bikesByType.put(rs.getString("type"), rs.getString("count_bikes"));
+                    }
+                    return bikesByType;
+                }
+            },rentalPointId);
+        }catch (EmptyResultDataAccessException e){
+            return null;
+        }catch (DataAccessException e) {
+            LOGGER.error("Exception while getting available bikes by rentalPointId", e);
+            throw new DAOException("Exception while getting available bikes rentalPointId", e);
+        }
+        return bikesByType;
     }
 
     @Override
@@ -143,12 +176,20 @@ public class BikeDAOImpl implements BikeDAO {
 
     @Override
     public Bike getById(long id) throws DAOException {
+
         return null;
     }
 
     @Override
     public List<Bike> getAll() throws DAOException {
-        return null;
+        List<Bike> bikes;
+        try {
+           bikes = jdbcTemplate.query(SQL_GET_ALL_BIKES, new BikeMapper());
+        }catch (DataAccessException e){
+            LOGGER.error("Exception occurred during get bike from DB " + e);
+            throw new DAOException("An exception occurred in the layer DAO while getting get all bikes from the DB", e);
+        }
+        return bikes;
     }
 
     @Override
@@ -157,7 +198,12 @@ public class BikeDAOImpl implements BikeDAO {
     }
 
     @Override
-    public void delete(Bike entity) throws DAOException {
-
+    public void delete(Long id) throws DAOException {
+        try{
+            jdbcTemplate.update(SQL_DELETE_BIKE, id);
+        }catch (DataAccessException e){
+            LOGGER.error("An exception occurred in the layer DAO while delete bike from the DB", e);
+            throw new DAOException("An exception occurred in the layer DAO while delete bike from the DB", e);
+        }
     }
 }

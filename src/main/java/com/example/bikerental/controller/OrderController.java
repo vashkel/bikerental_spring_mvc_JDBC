@@ -12,6 +12,7 @@ import com.example.bikerental.service.BikeTypeService;
 import com.example.bikerental.service.OrderService;
 import com.example.bikerental.service.RentalPointService;
 import com.example.bikerental.service.UserService;
+import com.example.bikerental.util.PageConstant;
 import com.example.bikerental.util.PageMessage;
 import com.example.bikerental.util.RequestParameter;
 import com.example.bikerental.util.RequestTimeParameter;
@@ -54,7 +55,7 @@ public class OrderController {
     }
 
     @GetMapping()
-    public String showOrderForm(Model model){
+    public String showOrderForm(Model model) {
         try {
             List<RentalPoint> rentalPointList = rentalPointService.getRentalPoints();
             List<BikeType> bikeTypesList = bikeTypeService.getBikeTypes();
@@ -66,18 +67,18 @@ public class OrderController {
 //            }
         } catch (ServiceException e) {
             LOGGER.error("Get data error, ", e);
-            return "error/error" ;
+            return "error/error";
         }
-       return "order/createBikeOrder";
+        return PageConstant.CREATE_ORDER_PAGE;
     }
 
     @PostMapping("/addBikeToOrder")
     public String addBikeToOrder(@ModelAttribute("bike") Bike bike, @SessionAttribute Order order, HttpServletRequest request) throws ServiceException {
-           bike = bikeService.getBikeByTypeAndRentalPointId(bike.getBikeType().getId(), bike.getRentalPoint().getId());
-           if (bike == null) {
-               request.setAttribute(RequestParameter.MESSAGE.parameter(), ExceptionMessage.NOT_FREE_BIKE.message());
-               return "createBikeOrder";
-       }
+        bike = bikeService.getBikeByTypeAndRentalPointId(bike.getBikeType().getId(), bike.getRentalPoint().getId());
+        if (bike == null) {
+            request.setAttribute(RequestParameter.MESSAGE.parameter(), ExceptionMessage.NOT_FREE_BIKE.message());
+            return "createBikeOrder";
+        }
         order.addBike(bike);
         return "redirect:/order";
     }
@@ -88,19 +89,19 @@ public class OrderController {
         double userBalance = user.getBalance();
         if (userBalance < 500) {
             request.setAttribute(RequestParameter.MESSAGE.parameter(), ExceptionMessage.NOT_ENOUGH_MONEY.message());
-            return "order/createBikeOrder";
+            return PageConstant.CREATE_ORDER_PAGE;
         }
         order = orderService.createOrder(order.getBikes(), user);
-        model.addAttribute("order" , order);
+        model.addAttribute("order", order);
         RequestTimeParameter.addParam(request, order.getStart_date());
         return "redirect:/user";
     }
 
     @PostMapping("/closeOrder")
-    public String closeOrder(@SessionAttribute Order order, HttpServletRequest request, SessionStatus sessionStatus, Model model){
+    public String closeOrder(@SessionAttribute Order order, HttpServletRequest request, SessionStatus sessionStatus, Model model) {
         try {
             boolean isPerformed = orderService.closeOrder(order);
-            if(isPerformed){
+            if (isPerformed) {
                 sessionStatus.setComplete();
                 request.setAttribute(RequestParameter.MESSAGE.parameter(), PageMessage.ORDER_CLOSE.message());
                 User updatedUser = userService.getByID(order.getUser().getId());
@@ -115,15 +116,27 @@ public class OrderController {
 
     @GetMapping("/userOrders")
     public String getUserOrders(@SessionAttribute("user") User user, Model model) throws ServiceException {
-           try {
-               List<Order> orderList = orderService.getAllOrderByUser(user);
-               model.addAttribute("orderList", orderList);
-           }catch (ServiceException e){
-               LOGGER.error("Get orders by user error : ", e);
-               return "redirect:error/error";
-           }
-
-        return "order/userOrders";
+        try {
+            List<Order> orderList = orderService.getAllOrderByUser(user);
+            model.addAttribute("orderList", orderList);
+        } catch (ServiceException e) {
+            LOGGER.error("Get orders by user error : ", e);
+            return "redirect:error/error";
+        }
+        return PageConstant.USER_ORDERS_PAGE;
     }
 
+    @GetMapping("/allOrders")
+    public String allOrders(Model model) {
+        List<Order> orderListAllUsers;
+        try {
+            orderListAllUsers = orderService.getAllOrders();
+            model.addAttribute(RequestParameter.ORDER_LIST_ALL_USERS.parameter(), orderListAllUsers);
+        } catch (ServiceException e) {
+            LOGGER.error("Exception occurred while find orders, ", e);
+            return "error/error";
+        }
+
+        return PageConstant.ALL_ORDERS_PAGE;
+    }
 }

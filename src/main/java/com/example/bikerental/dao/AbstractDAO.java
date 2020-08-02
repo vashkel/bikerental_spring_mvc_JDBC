@@ -56,10 +56,10 @@ public interface AbstractDAO<T extends Entity> {
     /**
      * Method deletes entity
      *
-     * @param entity
+     * @param id
      * @throws DAOException com.example.bikerental_spring_mvc.exception thrown in case error occurs
      */
-    void delete(T entity) throws DAOException;
+    void delete(Long id) throws DAOException;
 
 }
 

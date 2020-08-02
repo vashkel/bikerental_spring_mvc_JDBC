@@ -3,7 +3,6 @@ package com.example.bikerental.dao;
 import com.example.bikerental.entity.Order;
 import com.example.bikerental.entity.User;
 import com.example.bikerental.exception.DAOException;
-import com.example.bikerental.util.PageInfo;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ public interface OrderDAO extends AbstractDAO<Order> {
 
    List<Order> getAllOrdersByUserId(long userId) throws DAOException;
 
-    List<Order> getAllByLimit(PageInfo pageInfo) throws DAOException;
+    List<Order> getAllOrders() throws DAOException;
 
     Order createOrder(Order order) throws DAOException;
 

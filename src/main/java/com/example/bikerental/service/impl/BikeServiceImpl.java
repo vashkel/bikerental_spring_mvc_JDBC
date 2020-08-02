@@ -2,6 +2,7 @@ package com.example.bikerental.service.impl;
 
 import com.example.bikerental.dao.BikeDAO;
 import com.example.bikerental.entity.Bike;
+import com.example.bikerental.entity.BikeStatusEnum;
 import com.example.bikerental.exception.DAOException;
 import com.example.bikerental.exception.ServiceException;
 import com.example.bikerental.service.BikeService;
@@ -11,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +30,18 @@ public class BikeServiceImpl implements BikeService {
     @Override
     public List<Bike> getAllBike(PageInfo pageInfo) throws ServiceException {
         return null;
+    }
+
+    @Override
+    public List<Bike> getAll() throws ServiceException {
+        List<Bike> bikes;
+        try {
+            bikes = bikeDAO.getAll();
+        } catch (DAOException e) {
+            LOGGER.error("get All bikes error " + e);
+            throw new ServiceException("get All bikes error ", e);
+        }
+        return bikes;
     }
 
     @Override
@@ -95,9 +107,16 @@ public class BikeServiceImpl implements BikeService {
     }
 
     @Override
-    public void changeStatusById(long bikeId, String status) throws ServiceException {
+    public void changeStatusById(String bikeId, String status) throws ServiceException {
+        Long id = Long.valueOf(bikeId);
+        String changedStatus;
+        if (BikeStatusEnum.BUSY.toString().equals(status)){
+            changedStatus = BikeStatusEnum.FREE.toString();
+        }else {
+            changedStatus = BikeStatusEnum.BUSY.toString();
+        }
         try {
-            bikeDAO.changeStatusById(bikeId, status);
+            bikeDAO.changeStatusById(id, changedStatus);
         } catch (DAOException e) {
             LOGGER.error("Exception occurred while change bike status by id: " + e);
             throw new ServiceException("Exception occurred while change bike status by id: " + e.getMessage());
@@ -105,11 +124,11 @@ public class BikeServiceImpl implements BikeService {
     }
 
     @Override
-    public void deleteBikeById(long bikeId) throws ServiceException {
+    public void deleteBikeById(String bikeId) throws ServiceException {
         Bike bike;
+        Long id = Long.valueOf(bikeId);
         try {
-            bike = bikeDAO.getById(bikeId);
-            bikeDAO.delete(bike);
+            bikeDAO.delete(id);
         } catch (DAOException e) {
             LOGGER.error("Exception occurred while delete bike by id: " + e);
             throw new ServiceException("Exception occurred while delete bike by id: " + e.getMessage());
@@ -118,7 +137,7 @@ public class BikeServiceImpl implements BikeService {
 
     @Override
     public Map<String, String> getAvailableBikesByRentalPointId(long rentalPointId) throws ServiceException {
-        Map<String,String> bikesByType = new HashMap<>();
+        Map<String, String> bikesByType = null;
         try {
             bikesByType = bikeDAO.getAvailableBikesByRentalPointId(rentalPointId);
         } catch (DAOException e) {

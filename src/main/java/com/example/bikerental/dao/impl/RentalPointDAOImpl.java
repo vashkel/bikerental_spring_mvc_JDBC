@@ -53,7 +53,7 @@ public class RentalPointDAOImpl implements RentalPointDAO {
     }
 
     @Override
-    public void delete(RentalPoint entity) throws DAOException {
+    public void delete(Long id) throws DAOException {
 
     }
 }

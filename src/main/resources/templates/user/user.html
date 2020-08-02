@@ -4,8 +4,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/style/header.css}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <link href="../../static/style/header.css" rel="stylesheet" th:href="@{/style/header.css}" />
     <title th:text="#{title}"></title>
 </head>
 <body>
@@ -16,7 +19,7 @@
             <li><a href="/order"  th:text="#{createOrderLabel}"></a></li>
         </div>
         <li><a href="/order/userOrders" th:text="#{ordersLabel}">></a></li>
-        <li><a href="BikeRentalServlet?command=rental_points_page" th:text="#{contacts}"></a></li>
+        <li><a href="/rentalPoint/contacts" th:text="#{contacts}"></a></li>
         <li style="float: right; margin-right: 50px"><a href="#" th:text="${session.user.name}"></a>
             <ul>
                 <li><a href="#" onclick="showProfile()" th:text="#{profileLabel}"></a> </li>
@@ -45,7 +48,10 @@
 </nav>
 
 <div style="margin-top: 20px" >
-    <div th:src="@{/templates/fragments/editUser.html}"></div>
+    <div th:insert="~{/fragments/editUser :: editUser}"></div>
+
+
+
 </div>
 <!-- --------------------------end of menu -------------------------------- -->
 <div id="body">
@@ -126,7 +132,8 @@
 <input type="hidden" id="orderUser" th:value="${message}">
 
 <script type="text/javascript"   th:src="@{/style/js/user.js}"> showOrderTime()</script>
-<div th:src="@{/templates/messages.html}"></div>
-<div th:src="@{/templates/footer.html}"></div>
+<div th:insert="~{/fragments/messages :: messages}"></div>
+
+
 </body>
 </html>

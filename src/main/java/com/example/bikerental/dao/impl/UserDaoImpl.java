@@ -75,25 +75,40 @@ public class UserDaoImpl implements UserDAO {
 
     @Override
     public void register(User user) throws DAOException {
-       jdbcTemplate.update(SQL_ADD_USER,
-               user.getName(),
-               user.getSurname(),
-               user.getLogin(),
-               user.getPassword(),
-               user.getSalt(),
-               user.getTel(),
-               user.getBalance(),
-               user.getEmail());
+      try{
+          jdbcTemplate.update(SQL_ADD_USER,
+                  user.getName(),
+                  user.getSurname(),
+                  user.getLogin(),
+                  user.getPassword(),
+                  user.getSalt(),
+                  user.getTel(),
+                  user.getBalance(),
+                  user.getEmail());
+      }catch (DataAccessException e){
+          LOGGER.error("An exception occurred in the layer DAO while registration user to the DB", e);
+          throw new DAOException("An exception occurred in the layer DAO while registration user to the DB", e);
+      }
        }
 
     @Override
     public void deleteUserById(long id) throws DAOException {
-
+        try {
+            jdbcTemplate.update(SQL_DELETE_USER_BY_ID, id);
+        } catch (DataAccessException e) {
+            LOGGER.error("An exception occurred in the layer DAO while delete user from the DB", e);
+            throw new DAOException("An exception occurred in the layer DAO while delete user from the DB", e);
+        }
     }
 
     @Override
     public int changeStateById(long userId, String state) throws DAOException {
-        return 0;
+        try {
+            return jdbcTemplate.update(SQL_CHANGE_STATE_BY_ID, state, userId);
+        }catch (DataAccessException e){
+            LOGGER.error("An exception occurred in the layer DAO while changing user state to the DB", e);
+            throw new DAOException("An exception occurred in the layer DAO while changing user  state the DB", e);
+        }
     }
 
     @Override
@@ -103,9 +118,15 @@ public class UserDaoImpl implements UserDAO {
 
     @Override
     public int add(User entity) throws DAOException {
-        return jdbcTemplate.update(SQL_ADD_USER, entity.getName(),entity.getSurname(),
-                entity.getLogin(),entity.getPassword(),
-                entity.getSalt(),entity.getTel(),entity.getBalance(),entity.getEmail());
+        try {
+            return jdbcTemplate.update(SQL_ADD_USER, entity.getName(), entity.getSurname(),
+                    entity.getLogin(), entity.getPassword(),
+                    entity.getSalt(), entity.getTel(), entity.getBalance(), entity.getEmail());
+        } catch (DataAccessException e) {
+            LOGGER.error("An exception occurred in the layer DAO while add user to the DB", e);
+            throw new DAOException("An exception occurred in the layer DAO while add user to the DB", e);
+
+        }
     }
 
     @Override
@@ -120,15 +141,13 @@ public class UserDaoImpl implements UserDAO {
 
     @Override
     public void update(User entity) throws DAOException {
-        jdbcTemplate.update(SQL_UPDATE_USER,entity.getName(),entity.getSurname(),
-                entity.getLogin(),entity.getPassword(),
-                entity.getSalt(),entity.getTel(),entity.getBalance(),entity.getEmail(),entity.getId());
+        jdbcTemplate.update(SQL_UPDATE_USER, entity.getName(), entity.getSurname(),
+                entity.getLogin(), entity.getPassword(),
+                entity.getSalt(), entity.getTel(), entity.getBalance(), entity.getEmail(), entity.getId());
     }
 
     @Override
-    public void delete(User entity) throws DAOException {
-        jdbcTemplate.update(SQL_DELETE_USER,entity.getName(),entity.getSurname(),
-                entity.getLogin(),entity.getPassword(),
-                entity.getSalt(),entity.getTel(),entity.getBalance(),entity.getEmail());
+    public void delete(Long id) throws DAOException {
+        jdbcTemplate.update(SQL_DELETE_USER, id);
     }
 }

@@ -12,9 +12,9 @@ public interface UserService {
 
     List<User> getAllUsers() throws ServiceException;
 
-    void deleteUserById(long id) throws ServiceException;
+    void deleteUserById(String id) throws ServiceException;
 
-    void changeStateById(long userId, String state) throws ServiceException;
+    void changeStateById(String userId, String state) throws ServiceException;
 
     User getByID(long id) throws ServiceException;
 

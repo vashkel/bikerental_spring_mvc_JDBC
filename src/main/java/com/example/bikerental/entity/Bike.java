@@ -2,18 +2,16 @@ package com.example.bikerental.entity;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class Bike extends Entity {
     private static final long serialVersionUID = -7055397869971477475L;
-    @NotBlank(message = "Name is requared")
+    @NotNull(message = "Name is required")
     private String brand;
-    @NotBlank(message = "Model is requared")
+    @NotNull(message = "Model is required")
     private String model;
-    @NotBlank(message = "BikeType is requared")
     private BikeType bikeType;
-    @NotBlank(message = "RentalPoint is requared")
     private RentalPoint rentalPoint;
 
     private BikeStatusEnum bikeStatus;

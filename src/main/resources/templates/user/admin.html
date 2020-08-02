@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org" xmlns:jsp="http://java.sun.com/JSP/Page">
+      xmlns:th="http://www.thymeleaf.org" >
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/style/header.css}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <link href="../../static/style/header.css" rel="stylesheet" th:href="@{/style/header.css}" />
     <title th:text="#{title}"></title>
 </head>
 <body>
@@ -14,9 +16,9 @@
     <ul>
         <li class="logo" th:text="#{title}"></li>
         <li><a href="/users" th:text="#{usersLabel}"></a></li>
-        <li><a href="BikeRentalServlet?command=bikeCatalog" th:text="#{bikeCatalogLabel}"></a></li>
-        <li><a href="BikeRentalServlet?command=rental_points_page" th:text="#{rentalPointsLabel}"></a></li>
-        <li><a href="BikeRentalServlet?command=all_orders_page" th:text="#{ordersLabel}"></a></li>
+        <li><a href="/bike/bikes" th:text="#{bikeCatalogLabel}"></a></li>
+        <li><a href="/rentalPoint/allRentalPoints" th:text="#{rentalPointsLabel}"></a></li>
+        <li><a href="/order/allOrders" th:text="#{ordersLabel}"></a></li>
         <li style="float: right; margin-right: 50px"><a href="#" th:text="${session.user.name}"></a>
             <ul>
                 <li><a href="#" onclick="showProfile()" th:text="#{profileLabel}"></a></li>
@@ -31,24 +33,22 @@
     <ul class="nav nav-pills pull-xs-right">
         <li class="nav-item active">
             <a class="nav-link text-white"
-               href="?lang=en"
-               th:text="#{locButtonEN}">
-
+               href="?lang=ru"
+               th:text="#{locButtonRU}">
             </a>
         </li>
         <li class="nav-item active">
             <a class="nav-link text-white"
-               href="?lang=ru"
-               th:text="#{locButtonRU}">
-
+               href="?lang=en"
+               th:text="#{locButtonEN}">
             </a>
         </li>
     </ul>
 </nav>
-<div id="calend" style="margin-top: 20px">
-    <div th:src="@{/templates/fragments/editUser.html}"></div>
+<div style="margin-top: 20px" >
+    <div th:insert="~{/fragments/editUser :: editUser}"></div>
 </div>
-<form method="POST" th:action="@{/addBike}"  th:object="${bike}" id="addBikeForm">
+<form method="POST" th:action="@{/bike/addBike}" action="/bike/addBike"  th:object="${bike}" id="addBikeForm">
     <div class="col-md-8" id="addBike" style="float: left">
 
         <div style="text-align:center; margin-bottom:10px; font-size: 28px" th:text="#{addBikeLabel}"></div>
@@ -57,12 +57,15 @@
             <div class="col-md-6">
                 <label th:text="#{brandLabel}">*</label>
             </div>
-            <div class="col-md-4">
-                <input type="text" id="brand" name="brand" class="form-control"
+            <div class="col-md-4" >
+                <input type="text" id="brand" name="brand" th:field="*{brand}"   class="form-control"
                        required
                        th:placeholder="#{brandPlaceholder}"
                        th:oninvalid="#{brandWarn}"
                        oninput="setCustomValidity('')">
+                <span class="validationError"
+                      th:if="${#fields.hasErrors('brand')}"
+                      th:error="*{brand}"></span>
             </div>
         </div>
         <!--   ---------------------------------- model ------------------------------------------ -->
@@ -71,10 +74,13 @@
                 <label th:text="#{modelLabel}"> *</label>
             </div>
             <div class="col-md-4">
-                <input type="text" id="model" name="model" class="form-control" th:placeholder="#{modelPlaceholder}"
+                <input type="text" id="model" th:field="*{model}" name="model" class="form-control" th:placeholder="#{modelPlaceholder}"
                        required
                        oninvalid="setCustomValidity('${modelWarnLabel}')"
                        oninput="setCustomValidity('')">
+                <span class="validationError"
+                      th:if="${#fields.hasErrors('model')}"
+                      th:error="*{model}"></span>
             </div>
         </div>
         <!--   ---------------------------------- bike type ------------------------------------------ -->
@@ -83,9 +89,10 @@
                 <label th:text="#{bikeTypeLabel}"> *</label>
             </div>
             <div class="col-md-4">
-                <select name="bikeTypeId" id="bikeTypeId" class="form-control" style="width: 330px; float: left;">
+                <select name="bikeTypeId" id="bikeTypeId"  th:field="*{bikeType.id}"  class="form-control"
+                        style="width: 330px; float: left;" required>
                     <option selected value="0" th:text="#{chooseBikeTypeLabel}"></option>
-                    <div  th:each="bikeType:${bikeTypeList}">
+                    <div  th:each="bikeType:${bikeTypeList}" >
                         <option th:value="${bikeType.id}" th:text="${bikeType.type}"></option>
                     </div>
                 </select>
@@ -97,16 +104,14 @@
                 <label th:text="#{rentalPointsLabel}">*</label>
             </div>
             <div class="col-md-5">
-                <select name="rentalPointId" id="rentalPointId" class="form-control" style="width: 330px; float: left;"
-                        required
+                <select name="rentalPointId" id="rentalPointId" th:field="*{rentalPoint.id}" class="form-control"
+                        style="width: 330px; float: left;" required
                         oninvalid="setCustomValidity('${countWarnLabel}')"
                         oninput="setCustomValidity('')">
                     <option selected value="0" th:text="#{chooseRentalPoint}">
                     </option>
                     <div  th:each="rentalPoint:${rentalPointList}">
-                        <option th:value="${rentalPoint.id}" th:text="${rentalPoint.name}">
-
-                        </option>
+                        <option th:value="${rentalPoint.id}" th:text="${rentalPoint.name}"></option>
                     </div>
                 </select>
             </div>
@@ -124,24 +129,32 @@
                         th:placeholder="#{countLabel}"
                         required
                         pattern="[1-9]"
-                        oninvalid="setCustomValidity('${countWarnLabel}')"
-                        oninput="setCustomValidity('')">
+                        th:oninvalid="#{countWarnLabel}"
+                        th:oninput="''"
+
+                >
             </div>
         </div>
         <!--   ---------------------------------- submit block ---------------------------------------- -->
         <div class="row">
             <div class="col-md-6"></div>
             <div class="col-md-5" align="center">
-                <input id="command" type="hidden" name="command" value="add_bike"/>
                 <input type="submit" class="btn btn-primary" th:value="#{addBikeLabel}"/>
             </div>
         </div>
     </div>
 </form>
+<!--<div th:if="${error ne null}">-->
+    <!--<input type="hidden" id="errorMessage" th:value="#{${error}}" />-->
+<!--</div>-->
+<!--<div th:if="${message ne null}">-->
+    <!--<input type="hidden" id="message" th:text="#{${message}}" />-->
+<!--</div>-->
+<!--<script type="text/javascript" th:src="@{/style/js/message.js}"></script>-->
 <!---------------------------------------------BikeList--------------------->
-<script type="text/javascript" th:src="@{/js/editUser.js}"></script>
-<script type="text/javascript" th:src="@{/js/bike.js}"></script>
-<div th:replace="footer.html"></div>
-<div th:insert="messages.html"></div>
+<script type="text/javascript" th:src="@{/style/js/editUser.js}"></script>
+<script type="text/javascript" th:src="@{/style/js/bike.js}"></script>
+<div th:insert="~{/fragments/messages :: messages}"></div>
+<div th:insert="~{/fragments/footer :: footer}"></div>
 </body>
 </html>

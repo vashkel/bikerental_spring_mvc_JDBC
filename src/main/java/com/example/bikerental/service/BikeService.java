@@ -10,6 +10,8 @@ import java.util.Map;
 public interface BikeService {
     List<Bike> getAllBike(PageInfo pageInfo) throws ServiceException;
 
+    List<Bike> getAll() throws ServiceException;
+
     List<String> getAllBikeBrand() throws ServiceException;
 
     Bike getBikeById(long id) throws ServiceException;
@@ -20,9 +22,9 @@ public interface BikeService {
 
     Bike getBikeByTypeAndRentalPointId(long bikeTypeId, long rentalPointId) throws ServiceException;
 
-    void changeStatusById(long bikeId, String status) throws ServiceException;
+    void changeStatusById(String bikeId, String status) throws ServiceException;
 
-    void deleteBikeById(long bikeId) throws ServiceException ;
+    void deleteBikeById(String bikeId) throws ServiceException ;
 
     Map<String, String> getAvailableBikesByRentalPointId(long rentalPointId) throws ServiceException;
 

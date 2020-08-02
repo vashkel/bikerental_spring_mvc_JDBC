@@ -10,7 +10,7 @@ public class ApplicationController {
 
     @GetMapping("/homePage")
     public String homePage(@SessionAttribute("user") User user) {
-        return user.getRole().getHomePage();
+        return "redirect:/user";
 
     }
 }

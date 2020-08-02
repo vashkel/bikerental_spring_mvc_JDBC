@@ -51,7 +51,7 @@ public class BikeTypeDAOImpl implements BikeTypeDAO {
     }
 
     @Override
-    public void delete(BikeType entity) throws DAOException {
+    public void delete(Long id) throws DAOException {
 
     }
 }
