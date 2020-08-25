@@ -22,10 +22,7 @@ import java.util.Arrays;
 @Configuration
 public class MyLogger {
 
-
     private Authorization authorization;
-
-
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

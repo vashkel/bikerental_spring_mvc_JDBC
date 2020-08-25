@@ -27,14 +27,58 @@
             </div>
             <br>
 
-            <form action="BikeRentalServlet" method="post" id="passwUpdateForm"
+            <form action="/changeUserPassword" th:action="@{/changeUserPassword}" method="post" id="passwUpdateForm"
                   onsubmit="checkPassword(); return false">
-                <div th:src="@{/fragments/passwordVerification.html}"></div>
+                <div id="currentPassword" style="display: none">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label th:text="#{currentPasswordLabel}">*</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input 	type="password"
+                                      name="currentPassword"
+                                      class="form-control"
+                                      th:placeholder="#{currentPasswordPlaceholder}"
+                                      pattern="[\wа-яА-ЯёЁ]{3,15}"
+                                      oninvalid="setCustomValidity('${password_warn}')"
+                                      oninput="setCustomValidity('')">
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 20px">
+                    <div class="col-md-4">
+                        <label th:text="#{passwordLabel}">*</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input 	type="password"
+                                  name="password"
+                                  class="form-control"
+                                  id="passw1"
+                                  required
+                                  th:placeholder="#{passwordPlaceholder}"
+                                  oninvalid="setCustomValidity('${password_warn}')"
+                                  oninput="setCustomValidity('')">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label th:text="#{againPasswordLabel}">*</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input 	type="password"
+                                  class="form-control"
+                                  id="passw2"
+                                  required
+                                  th:placeholder="#{againPasswordPlaceholder}"
+                                  oninvalid="setCustomValidity('${password_warn}')"
+                                  oninput="setCustomValidity('')">
+                    </div>
+                </div>
+                <script th:src="@{/style/js/password.js}"></script>
                 <div class="row">
                     <div class="col-md-4"></div>
                     <div class="col-md-4" align="center">
-                        <input type="hidden" name="command" value="change_password"/>
-                        <input type="submit" class="btn btn-primary" value="${changeLabel}">
+                        <input type="submit" class="btn btn-primary" th:placeholder="#{changeLabel}">
                     </div>
                 </div>
             </form>

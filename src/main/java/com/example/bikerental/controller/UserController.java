@@ -173,6 +173,29 @@ public class UserController {
         return "redirect:/users";
     }
 
+    @PostMapping("changeUserPassword")
+    public String changeUserPassword(Model model){
+        User user = (User) model.getAttribute("user");
+
+        String currentPassword = (String) model.getAttribute(RequestParameter.CURRENT_PASSWORD.parameter());
+        String password = (String) model.getAttribute(RequestParameter.PASSWORD.parameter());
+
+        try {
+//            Order order = orderService.findOpenOrder(user);
+//            request.setAttribute(RequestParameter.ORDER.parameter(), order);
+//            if (order != null) {
+//                AddTimeParameterToRequest.addParam(request, order.getStartDate());
+//            }
+            userService.changePassword(currentPassword, password, user);
+            model.addAttribute(RequestParameter.MESSAGE.parameter(), PageMessage.PASSWORD_CHANGED.message());
+            model.addAttribute(RequestParameter.LOGIN_MENU.parameter(), false);
+        } catch (ServiceException e) {
+            model.addAttribute(RequestParameter.ERROR.parameter(), e);
+            model.addAttribute(RequestParameter.LOGIN_MENU.parameter(), false);
+        }
+        return user.getRole().getHomePage();
+    }
+
     @GetMapping("/changeState")
     public String changeState(@RequestParam("id") String id,
                               @RequestParam("userState") String userState,

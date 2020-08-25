@@ -78,10 +78,13 @@
             <label th:text="#{balanceLabel}">*
             </label>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4"  >
             <input type="text"
                    name="balance"
-                   class="form-control">
+                   class="form-control"
+                   th:placeholder="${session.user.balance}"
+
+            >
         </div>
     </div>
 </div>

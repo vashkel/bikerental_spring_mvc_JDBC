@@ -114,9 +114,31 @@ import java.util.List;
     }
 
     @Override
-    public void changePassword(String currentPassword, String password, User user) throws ServiceException {
-
+    public void changePassword(String currentPassword, String newPassword, User user) throws ServiceException {
+        Pair<String, String> hashSalt;
+        if (!Validator.validatePassword(currentPassword)) {
+            throw new ServiceException(ExceptionMessage.VALIDATION_ERROR.toString());
+        }
+        try {
+            User currentUser = login(user.getLogin(), currentPassword);
+            if (currentUser == null) {
+                throw new ServiceException(ExceptionMessage.CURRENT_PASSW_WRONG.toString());
+            }
+            if (!Validator.validatePassword(newPassword)) {
+                throw new ServiceException(ExceptionMessage.VALIDATION_ERROR.toString());
+            }
+            hashSalt = new HashGenerator().generateHashSalt(newPassword);
+            currentUser.setPassword(hashSalt.getKey());
+            currentUser.setSalt(hashSalt.getValue());
+            userDAO.updatePassword(newPassword, currentUser);
+        } catch (DAOException e) {
+            LOGGER.error("Exception was thrown while changing user password : " + e);
+            throw new ServiceException("Exception was thrown while changing user password : " + e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     public boolean register(User newUser) throws ServiceException {
