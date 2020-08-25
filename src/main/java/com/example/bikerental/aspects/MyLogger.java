@@ -34,7 +34,7 @@ public class MyLogger {
     @Pointcut("within(@org.springframework.stereotype.Repository *)" +
             "|| within(@org.springframework.stereotype.Service *)" +
             "|| within(@org.springframework.stereotype.Controller *)")
-    public static void springBeanPointcut() {
+    public static void springBeanPointcut() { 
 
     }
 
